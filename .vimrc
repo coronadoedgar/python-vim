@@ -17,6 +17,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'git://git.wincent.com/command-t.git'
 " Plugin 'file:///home/gmarik/path/to/plugin'
 Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+Plugin 'benmills/vimux'
 " Plugin 'ascenator/L9', {'name': 'newL9'}
 
 Plugin 'airblade/vim-gitgutter'
@@ -29,8 +30,20 @@ Plugin 'scrooloose/nerdtree'                " Project and file navigation
 
 Plugin 'flazz/vim-colorschemes'
 Plugin 'scrooloose/syntastic'
+Plugin 'jaredly/vim-debug'
+Plugin 't9md/vim-quickhl'
 call vundle#end()            " required
 filetype plugin indent on    " required
+
+
+" =====================
+" 5. SETTING POWELINE
+" =====================
+" Make window navigation less painful.
+set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim
+set laststatus=2
+set t_Co=256
+
 
 " =====================
 " 6. MAPS AND FUNCTIONS
@@ -48,6 +61,8 @@ map <C-t> :NERDTreeToggle<CR>
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
 "=====================================================
 "" TagBar settings
 "=====================================================
@@ -55,6 +70,21 @@ let g:tagbar_autofocus=0
 let g:tagbar_width=35
 autocmd BufEnter *.py :call tagbar#autoopen(0)
 autocmd BufWinLeave *.py :TagbarClose
+
+"=====================================================
+"" Quickhl
+"=====================================================
+nmap <Space>m <Plug>(quickhl-manual-this)
+xmap <Space>m <Plug>(quickhl-manual-this)
+nmap <Space>M <Plug>(quickhl-manual-reset)
+xmap <Space>M <Plug>(quickhl-manual-reset)
+
+"=====================================================
+"" TagBar folding
+"=====================================================
+set foldlevelstart=1
+set foldmethod=indent
+set nofoldenable
 
 set number
 set relativenumber
@@ -99,8 +129,12 @@ map <C-B>  :bprev<CR>
 imap <C-N> <Esc>:bnext<CR>a
 imap <C-B> <Esc>:bprev<CR>a
 
-colorscheme new-railscasts
+" colorscheme new-railscasts
+colorscheme monokai-chris
+
 " if filereadable($VIRTUAL_ENV . '/.vimrc')
 "   source $VIRTUAL_ENV/.vimrc
 " endif
-
+let g:VimuxHeight = "20"
+let mapleader = ","
+map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
